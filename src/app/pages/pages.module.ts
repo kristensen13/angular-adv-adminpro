@@ -31,8 +31,8 @@ import { RxjsComponent } from './rxjs/rxjs.component';
     Grafica1Component,
     PagesComponent,
     AccountSettingsComponent,
-    PromesasComponent,
-    RxjsComponent,
+    // PromesasComponent,
+    // RxjsComponent,
   ],
   imports: [
     CommonModule,

@@ -149,3 +149,5 @@ var customInitFunctions = () => {
     });
   });
 };
+
+customInitFunctions();

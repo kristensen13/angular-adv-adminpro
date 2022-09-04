@@ -38,6 +38,7 @@ Login register and recover password Page
   right: 0px;
 }
 .login-box .social {
+  /* display: inline-block; */
   display: block;
   margin-bottom: 30px;
 }
