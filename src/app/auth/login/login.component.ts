@@ -6,7 +6,7 @@ import {
   NgZone,
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { UsuarioService } from '../../services/usuario.service';
 import Swal from 'sweetalert2';
 
@@ -35,7 +35,7 @@ export class LoginComponent implements AfterViewInit {
 
   constructor(
     private router: Router,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private usuarioSvc: UsuarioService,
     private NgZone: NgZone
   ) {}
