@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { tap, map, catchError } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
@@ -8,6 +8,7 @@ import { environment } from '../../environments/environment';
 
 import { RegisterForm } from '../interfaces/register-form.interface';
 import { LoginForm } from '../interfaces/login-form.interface';
+import { Usuario } from '../models/usuario.model';
 
 declare const google: any;
 
@@ -17,14 +18,25 @@ const base_url = environment.base_url;
   providedIn: 'root',
 })
 export class UsuarioService {
-  constructor(private http: HttpClient, private router: Router) {}
+  public usuario!: Usuario;
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private NgZone: NgZone
+  ) {}
 
   logout() {
     localStorage.removeItem('token');
     //this.router.navigateByUrl('/login');
     google.accounts.id.revoke('2bitstechnology@gmail.com', () => {
-      this.router.navigateByUrl('/login');
+      this.NgZone.run(() => {
+        this.router.navigateByUrl('/login');
+      });
     });
+
+    // google.accounts.id.revoke('2bitstechnology@gmail.com', (done: any) => {
+    //   console.log('consent revoked');
+    // });
   }
 
   validarToken(): Observable<boolean> {
@@ -38,6 +50,10 @@ export class UsuarioService {
       })
       .pipe(
         tap((resp: any) => {
+          console.log(resp);
+          const { nombre, email, google, img, role, uid } = resp.usuario;
+          this.usuario = new Usuario(nombre, email, '', google, img, role, uid);
+
           localStorage.setItem('token', resp.token);
         }),
         map((resp) => true),
