@@ -1,17 +1,12 @@
 import { Injectable, NgZone } from '@angular/core';
-import {
-  ActivatedRouteSnapshot,
-  CanActivate,
-  RouterStateSnapshot,
-  Router,
-} from '@angular/router';
+import { ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
 import { UsuarioService } from '../services/usuario.service';
 import { tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
 })
-export class AuthGuard implements CanActivate {
+export class AuthGuard  {
   constructor(
     private usuarioSvc: UsuarioService,
     private router: Router,
@@ -22,10 +17,10 @@ export class AuthGuard implements CanActivate {
     //console.log('Paso por activate del guard');
 
     return this.usuarioSvc.validarToken().pipe(
-      tap((estaAutenticado) => {
+      tap((isAuth) => {
         //console.log(estaAutenticado);
 
-        if (!estaAutenticado) {
+        if (!isAuth) {
           //this.NgZone.run(() => {
           this.router.navigateByUrl('/login');
           //});
