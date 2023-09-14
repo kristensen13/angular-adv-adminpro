@@ -21,9 +21,10 @@ export class AuthGuard  {
         //console.log(estaAutenticado);
 
         if (!isAuth) {
-          //this.NgZone.run(() => {
-          this.router.navigateByUrl('/login');
-          //});
+          this.NgZone.run(() => {
+          //this.router.navigateByUrl('/login');
+          window.location.href = '/login';
+          });
         }
       })
     );
