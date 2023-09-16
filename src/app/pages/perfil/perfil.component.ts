@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UsuarioService } from 'src/app/services/usuario.service';
 import { Usuario } from '../../models/usuario.model';
 import { FileUploadService } from 'src/app/services/file-upload.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-perfil',
@@ -40,7 +41,11 @@ export class PerfilComponent implements OnInit {
         this.usuario.nombre = nombre;
         this.usuario.email = email;
         //TODO: colocar sweet alert confirmando los cambios
-      })
+
+        Swal.fire('Guardado', 'Datos actualizados correctamente.', 'success');
+      }, (err) => {
+        Swal.fire('Error al guardar', err.error.msg, 'error');
+      });
   }
 
   // cambiarImagen(file: File) {
@@ -91,7 +96,13 @@ export class PerfilComponent implements OnInit {
   subirImagen() {
     this.fileUploadSvc
       .actualizarFoto(this.imagenSubir, 'usuarios', this.usuario.uid!)
-      .then(img => this.usuario.img = img);
+      .then(img => {
+        this.usuario.img = img;
+        Swal.fire('Guardado', 'Imagen actualizada', 'success');
+      }).catch(err =>{
+        Swal.fire('Error', 'No se pudo subir la imagen', 'error');
+        console.log(err);
+      });
   }
 
 }

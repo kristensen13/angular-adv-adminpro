@@ -12,6 +12,7 @@ import Swal from 'sweetalert2';
 
 declare const google: any;
 
+
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -37,60 +38,21 @@ export class LoginComponent implements AfterViewInit {
     private router: Router,
     private fb: UntypedFormBuilder,
     private usuarioSvc: UsuarioService,
-    private NgZone: NgZone
+    private NgZone: NgZone,
   ) {}
 
   ngAfterViewInit(): void {
     this.googleInit();
   }
 
-  googleInit() {
-    google.accounts.id.initialize({
-      client_id:
-        '380996317376-pbjdh9srljth9aijqt3f19vv2fb764i2.apps.googleusercontent.com',
-      callback: (response: any) => this.handleCredentialResponse(response),
-    });
+ async googleInit() {
+   await this.usuarioSvc.googleInit();
+   this.auth2 = this.usuarioSvc.auth2;
     google.accounts.id.renderButton(
-      //document.getElementById('buttonDiv'),
       this.googleBtn.nativeElement,
-      { theme: 'outline', size: 'large' } // customization attributes
+      { theme: 'outline', size: 'large' }
     );
   }
-
-  handleCredentialResponse(response: any) {
-    //console.log('Encoded JWT ID token' + response.credential);
-    this.usuarioSvc.loginGoogle(response.credential).subscribe((resp) => {
-      //console.log({ login: resp });
-      this.NgZone.run(() => {
-        this.router.navigateByUrl('/');
-      });
-    });
-  }
-
-// startApp() {
-//     this.auth2 = gapi.auth2.init({
-//       client_id:
-//         '380996317376-pbjdh9srljth9aijqt3f19vv2fb764i2.apps.googleusercontent.com',
-//       cookiepolicy: 'single_host_origin',
-//     });
-//     this.attachSignin(document.getElementById('googleBtn'));
-//   }
-
-//   attachSignin(element: any) {
-//     this.auth2.attachClickHandler(element, {},
-//       (googleUser: any) => {
-//         const id_token = googleUser.getAuthResponse().id_token;
-//         console.log(id_token);
-//         this.usuarioSvc.loginGoogle(id_token).subscribe((resp) => {
-//           //console.log({ login: resp });
-//           this.NgZone.run(() => {
-//             this.router.navigateByUrl('/');
-//           });
-//         });
-//       }, (error: any) => {
-//         alert(JSON.stringify(error, undefined, 2));
-//       });
-//   }
 
   login() {
     this.usuarioSvc.login(this.loginForm.value).subscribe(
@@ -110,7 +72,5 @@ export class LoginComponent implements AfterViewInit {
         Swal.fire('Error', err.error.msg, 'error');
       }
     );
-
-    //console.log(this.loginForm.value);
   }
 }

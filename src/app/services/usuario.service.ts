@@ -9,9 +9,9 @@ import { environment } from '../../environments/environment';
 import { RegisterForm } from '../interfaces/register-form.interface';
 import { LoginForm } from '../interfaces/login-form.interface';
 import { Usuario } from '../models/usuario.model';
+import { OAuthService } from 'angular-oauth2-oidc';
 
 declare const google: any;
-
 const base_url = environment.base_url;
 
 @Injectable({
@@ -19,36 +19,23 @@ const base_url = environment.base_url;
 })
 export class UsuarioService {
   public usuario!: Usuario;
+  public auth2: any;
 
   constructor(
     private http: HttpClient,
     private router: Router,
-    private NgZone: NgZone
+    private NgZone: NgZone,
+    private OauthSvc: OAuthService
   ) {
-
+    this.googleInit();
   }
 
   get token(): string {
     return localStorage.getItem('token') || '';
   }
 
-  get uid(): string{
+  get uid(): string {
     return this.usuario.uid || '';
-  }
-
-  logout() {
-    localStorage.removeItem('token');
-    //this.router.navigateByUrl('/login');
-    google.accounts.id.revoke('2bitstechnology@gmail.com', () => {
-      this.NgZone.run(() => {
-        //this.router.navigateByUrl('/login');
-        window.location.href = '/login';
-      });
-    });
-
-    // google.accounts.id.revoke('2bitstechnology@gmail.com', (done: any) => {
-    //   console.log('consent revoked');
-    // });
   }
 
   validarToken(): Observable<boolean> {
@@ -92,6 +79,25 @@ export class UsuarioService {
     })
   }
 
+  googleInit() {
+    return new Promise<void>(resolve => {
+      this.auth2 = google.accounts.id.initialize({
+        client_id:
+          '380996317376-pbjdh9srljth9aijqt3f19vv2fb764i2.apps.googleusercontent.com',
+        callback: (response: any) => this.handleCredentialResponse(response),
+      });
+      resolve();
+    });
+  }
+
+  handleCredentialResponse(response: any) {
+    this.loginGoogle(response.credential).subscribe((resp) => {
+      this.NgZone.run(() => {
+        this.router.navigateByUrl('/');
+      });
+    });
+  }
+
   login(formData: LoginForm) {
     return this.http.post(`${base_url}/login`, formData).pipe(
       tap((resp: any) => {
@@ -103,9 +109,26 @@ export class UsuarioService {
   loginGoogle(token: string) {
     return this.http.post(`${base_url}/login/google`, { token }).pipe(
       tap((resp: any) => {
-        //console.log(resp);
         localStorage.setItem('token', resp.token);
       })
     );
+  }
+
+  logout() {
+    this.OauthSvc.logOut();
+    localStorage.removeItem('token');
+    //this.router.navigateByUrl('/login');
+
+    google.accounts.id.revoke('2bitstechnology@gmail.com', () => {
+      this.NgZone.run(() => {
+
+        // if (done.status === "ok") {
+        //   console.log('Token revocado con éxito');
+        // } else {
+        //   console.error('Error al revocar el token:', done);
+        // }
+        this.router.navigateByUrl('/login');
+      });
+    });
   }
 }

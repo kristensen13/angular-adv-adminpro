@@ -18,3 +18,4 @@ export class HeaderComponent {
     this.usuarioSvc.logout();
   }
 }
+

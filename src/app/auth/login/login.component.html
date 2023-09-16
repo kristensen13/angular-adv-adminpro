@@ -55,30 +55,22 @@
                         <button class="btn btn-info btn-lg btn-block text-uppercase btn-rounded" type="submit">Log In</button>
                     </div>
                 </div>
+                <div class="or-container">
+                  <div class="line-separator"></div>
+                  <div class="or-label">or</div>
+                  <div class="line-separator"></div>
+              </div>
                 <div class="row">
                     <div class="col-xs-12 col-sm-12 col-md-12 m-t-10 text-center" id="google-btn">
-                        <!-- <div class="social">
-                            <a
-                                href="javascript:void(0)"
-                                class="btn  btn-facebook"
-                                data-toggle="tooltip"
-                                title="Login with Facebook"
-                            >
-                                <i aria-hidden="true" class="fa fa-facebook"></i>
-                            </a>
-                            <a
-                                href="javascript:void(0)"
-                                class="btn btn-googleplus"
-                                data-toggle="tooltip"
-                                title="Login with Google"
-                            >
-                                <i aria-hidden="true" class="fa fa-google-plus"></i>
-                            </a>
-
-                        </div> -->
-                        <div class="social" #googleBtn id="buttonDiv"></div>
+                        <div class="social" #googleBtn id="buttonDiv" (click)="login()"></div>
+                         <!-- <button class="social" #googleBtn id="buttonDiv" (click)="login()"></button>-->
                     </div>
                 </div>
+                <!-- <div class="row">
+                  <button #googleBtn class="btn btn-lg btn-google btn-block text-uppercase btn-outline" (click)="googleInit()">
+                      <img src="https://img.icons8.com/color/22/000000/google-logo.png"> Sing in Google
+                  </button>
+              </div> -->
                 <div class="form-group m-b-0">
                     <div class="col-sm-12 text-center">
                         Don't have an account?
