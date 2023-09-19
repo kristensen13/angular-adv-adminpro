@@ -10,29 +10,30 @@ export class Usuario {
     public google?: boolean,
     public img?: string,
     public role?: string,
-    public uid?: string
-  ) {}
-
-  // get imagenUrl() {
-  //   if (this.img!.includes('https')) {
-  //     return this.img;
-  //   }
-  //   if (this.img) {
-  //     return `${base_url}/upload/usuarios/${this.img}`;
-  //   } else {
-  //     return `${base_url}/upload/usuarios/no-image`;
-  //   }
-  // }
+    public uid: string = ''
+  ) { }
 
   get imagenUrl() {
-    if (!this.img) {
-      return `${base_url}/upload/usuarios/no-image`;
+    if (!this.img || typeof this.img !== 'string') {
+      return `${base_url}/upload/usuarios/no-img.jpg`;
     } else if (this.img.includes('https')) {
       return this.img;
     } else if (this.img) {
       return `${base_url}/upload/usuarios/${this.img}`;
     } else {
-      return `${base_url}/upload/usuarios/no-image`;
+      return `${base_url}/upload/usuarios/no-img.jpg`;
     }
   }
+
+  // get imagenUrl() {
+  //   if (!this.img) {
+  //     return `${base_url}/upload/usuarios/no-image`;
+  //   } else if (this.img.includes('https')) {
+  //     return this.img;
+  //   } else if (this.img) {
+  //     return `${base_url}/upload/usuarios/${this.img}`;
+  //   } else {
+  //     return `${base_url}/upload/usuarios/no-image`;
+  //   }
+  // }
 }

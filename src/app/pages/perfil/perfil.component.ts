@@ -71,26 +71,19 @@ export class PerfilComponent implements OnInit {
     if (inputElement.files && inputElement.files.length > 0) {
       const file = inputElement.files[0];
       this.imagenSubir = file;
-      console.log(file);
-      console.log(this.imgOriginal);
 
       if (!file) {
         this.imgTemp = null;
         console.log('imgTemp: ', this.imgTemp);
-
         return;
       }
       const reader = new FileReader();
       reader.readAsDataURL(file);
 
       reader.onloadend = () => {
-
         this.imgTemp = reader.result!.toString();
-
       }
-
     }
-
   }
 
   subirImagen() {
