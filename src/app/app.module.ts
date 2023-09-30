@@ -14,7 +14,7 @@ import { HttpClientModule } from '@angular/common/http';
 @NgModule({
   declarations: [
     AppComponent,
-    NopagefoundComponent
+    NopagefoundComponent,
   ],
   imports: [
     BrowserModule,
@@ -26,4 +26,4 @@ import { HttpClientModule } from '@angular/common/http';
   ],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule { }
