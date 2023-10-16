@@ -44,3 +44,24 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+
+
+uploads/hospitales/**.jpg
+uploads/medicos/**.jpg
+uploads/usuarios/**.jpg
+
+uploads/hospitales/**.png
+uploads/medicos/**.png
+uploads/usuarios/**.png
+
+uploads/hospitales/**.jpeg
+uploads/medicos/**.jpeg
+uploads/usuarios/**.jpeg
+
+uploads/hospitales/**.gif
+uploads/medicos/**.gif
+uploads/usuarios/**.gif
+
+uploads/hospitales/**.svg
+uploads/medicos/**.svg
+uploads/usuarios/**.svg

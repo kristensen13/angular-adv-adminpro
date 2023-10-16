@@ -9,9 +9,9 @@ import { Router } from '@angular/router';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { UsuarioService } from '../../services/usuario.service';
 import Swal from 'sweetalert2';
+import { AuthGoogleService } from 'src/app/services/auth-google.service';
 
 declare const google: any;
-
 
 @Component({
   selector: 'app-login',
@@ -39,15 +39,16 @@ export class LoginComponent implements AfterViewInit {
     private fb: UntypedFormBuilder,
     private usuarioSvc: UsuarioService,
     private NgZone: NgZone,
-  ) {}
+    private googleSvc: AuthGoogleService,
+  ) { }
 
   ngAfterViewInit(): void {
     this.googleInit();
   }
 
- async googleInit() {
-   await this.usuarioSvc.googleInit();
-   this.auth2 = this.usuarioSvc.auth2;
+  async googleInit() {
+    await this.googleSvc.auth2;
+    this.auth2 = this.googleSvc.auth2;
     google.accounts.id.renderButton(
       this.googleBtn.nativeElement,
       { theme: 'outline', size: 'large' }
@@ -73,4 +74,5 @@ export class LoginComponent implements AfterViewInit {
       }
     );
   }
+
 }

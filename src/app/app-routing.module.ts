@@ -12,7 +12,7 @@ const routes: Routes = [
   //path: '/auth' AuthRouting
   {
     path: '',
-    redirectTo: '/dashboard',
+    redirectTo: 'dashboard',
     pathMatch: 'full',
   },
   {

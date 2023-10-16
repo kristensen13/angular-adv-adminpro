@@ -9,8 +9,8 @@ import { environment } from '../../environments/environment';
 import { RegisterForm } from '../interfaces/register-form.interface';
 import { LoginForm } from '../interfaces/login-form.interface';
 import { Usuario } from '../models/usuario.model';
-import { OAuthService } from 'angular-oauth2-oidc';
 import { CargarUsuario } from '../interfaces/cargar-usuarios.interface';
+import { AuthGoogleService } from './auth-google.service';
 
 declare const google: any;
 const base_url = environment.base_url;
@@ -20,19 +20,22 @@ const base_url = environment.base_url;
 })
 export class UsuarioService {
   public usuario!: Usuario;
-  public auth2: any;
 
   constructor(
     private http: HttpClient,
     private router: Router,
-    private NgZone: NgZone,
-    private OauthSvc: OAuthService
+    private authSvc: AuthGoogleService,
+    private ngZone: NgZone
   ) {
-    this.googleInit();
+    this.authSvc.googleInit();
   }
 
   get token(): string {
     return localStorage.getItem('token') || '';
+  }
+
+  get role(): 'ADMIN_ROLE' | 'USER_ROLE' {
+    return this.usuario.role!;
   }
 
   get uid(): string {
@@ -47,6 +50,11 @@ export class UsuarioService {
     }
   }
 
+  guardarLocalStorage(token: string, menu: string) {
+    localStorage.setItem('token', token);
+    localStorage.setItem('menu', JSON.stringify(menu));
+  }
+
   validarToken(): Observable<boolean> {
 
     return this.http
@@ -56,7 +64,7 @@ export class UsuarioService {
           //console.log(resp);
           const { nombre, email, google, img = '', role, uid } = resp.usuario;
           this.usuario = new Usuario(nombre, email, '', google, img, role, uid);
-          localStorage.setItem('token', resp.token);
+          this.guardarLocalStorage(resp.token, resp.menu);
           return true;
         }),
         catchError((error) => of(false))
@@ -66,7 +74,7 @@ export class UsuarioService {
   crearUsuario(formData: RegisterForm) {
     return this.http.post(`${base_url}/usuarios`, formData).pipe(
       tap((resp: any) => {
-        localStorage.setItem('token', resp.token);
+        this.guardarLocalStorage(resp.token, resp.menu);
       })
     );
   }
@@ -81,60 +89,7 @@ export class UsuarioService {
   }
 
   guardarUsuario(usuario: Usuario) {
-    return this.http.put(`${base_url}/usuarios/${this.uid}`, usuario, this.headers)
-  }
-
-  googleInit() {
-    return new Promise<void>(resolve => {
-      this.auth2 = google.accounts.id.initialize({
-        client_id:
-          '380996317376-pbjdh9srljth9aijqt3f19vv2fb764i2.apps.googleusercontent.com',
-        callback: (response: any) => this.handleCredentialResponse(response),
-      });
-      resolve();
-    });
-  }
-
-  handleCredentialResponse(response: any) {
-    this.loginGoogle(response.credential).subscribe((resp) => {
-      this.NgZone.run(() => {
-        this.router.navigateByUrl('/');
-      });
-    });
-  }
-
-  login(formData: LoginForm) {
-    return this.http.post(`${base_url}/login`, formData).pipe(
-      tap((resp: any) => {
-        localStorage.setItem('token', resp.token);
-      })
-    );
-  }
-
-  loginGoogle(token: string) {
-    return this.http.post(`${base_url}/login/google`, { token }).pipe(
-      tap((resp: any) => {
-        localStorage.setItem('token', resp.token);
-      })
-    );
-  }
-
-  logout() {
-    this.OauthSvc.logOut();
-    localStorage.removeItem('token');
-    //this.router.navigateByUrl('/login');
-
-    google.accounts.id.revoke(this.usuario.email, () => {
-      this.NgZone.run(() => {
-
-        // if (done.status === "ok") {
-        //   console.log('Token revocado con éxito');
-        // } else {
-        //   console.error('Error al revocar el token:', done);
-        // }
-        this.router.navigateByUrl('/login');
-      });
-    });
+    return this.http.put(`${base_url}/usuarios/${usuario.uid}`, usuario, this.headers)
   }
 
   cargarUsuarios(desde: number = 0) {
@@ -157,4 +112,32 @@ export class UsuarioService {
     const url = `${base_url}/usuarios/${usuario.uid}`;
     return this.http.delete(url, this.headers);
   }
+
+  login(formData: LoginForm) {
+    return this.http.post(`${base_url}/login`, formData).pipe(
+      tap((resp: any) => {
+        this.guardarLocalStorage(resp.token, resp.menu);
+      })
+    );
+  }
+
+  logout() {
+    //this.oauthSvc.logOut();
+
+
+
+    google.accounts.id.revoke(this.usuario.email, () => {
+      console.log(this.usuario.email + ' has disconnected');
+
+      this.ngZone.run(() => {
+        //this.authSvc.logout();
+        localStorage.removeItem('token');
+        localStorage.removeItem('menu');
+        this.router.navigateByUrl('/login');
+      })
+      // this.router.navigate(['/login']);
+    });
+
+  }
+
 }

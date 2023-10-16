@@ -49,6 +49,20 @@ export class BusquedasService {
     return resultados;
   }
 
+  busquedaGlobal(termino:string){
+    const url = `${base_url}/todo/${termino}`;
+    return this.http.get<any>(url, this.headers)
+      // .pipe(
+      //   map((resp: any) => {
+      //     return {
+      //       usuarios: this.transformarUsuarios(resp.resultados.usuarios),
+      //       medicos: this.transformarMedicos(resp.resultados.medicos),
+      //       hospitales: this.transformarHospitales(resp.resultados.hospitales)
+      //     }
+      //   })
+      // )
+  }
+
   buscar(
     tipo: 'usuarios' | 'medicos' | 'hospitales',
     termino: string
